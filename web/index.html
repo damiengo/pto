@@ -1,10 +1,22 @@
 <!DOCTYPE html>
-<html xmlns:ng="http://angularjs.org" ng-app="ptoApp">
+<html ng-app="ptoApp">
   <head>
     <title>Pto</title>
-    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.2.15/angular.min.js"></script>
   </head>
-  <body>
+  <body ng-controller="galleryCtrl">
 
+    <div>
+      <ul>
+        <li ng-repeat="gallery in galleries">
+          {{ gallery.title }}
+        </li>
+      </ul>
+
+    </div>
+
+    <script src="bower_components/angular/angular.js"></script>
+    <script src="bower_components/angular-route/angular-route.js"></script>
+    <script src="bower_components/angular-resource/angular-resource.js"></script>
+    <script src="js/main.js"></script>
   </body>
 </html>
