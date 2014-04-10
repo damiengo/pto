@@ -2,10 +2,13 @@
 <html ng-app="ptoApp">
   <head>
     <title>Pto</title>
+    <link href="bower_components/bootstrap/dist/css/bootstrap.min.css" rel="stylesheet" />
+    <link href="bower_components/bootstrap/dist/css/bootstrap-theme.min.css" rel="stylesheet" />
   </head>
   <body ng-controller="galleryCtrl">
 
     <div>
+      <h1>Galleries</h1>
       <ul>
         <li ng-repeat="gallery in galleries">
           {{ gallery.title }}
