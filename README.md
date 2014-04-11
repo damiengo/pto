@@ -13,3 +13,10 @@ Run in dev
 ----------
 
     php -S 0.0.0.0:8000 -t web web/api.php
+
+Help
+----
+
+Multiple files uploading
+https://github.com/flowjs/ng-flow
+http://flowjs.github.io/ng-flow/
