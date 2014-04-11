@@ -5,10 +5,14 @@
     <link href="bower_components/bootstrap/dist/css/bootstrap.min.css" rel="stylesheet" />
     <link href="bower_components/bootstrap/dist/css/bootstrap-theme.min.css" rel="stylesheet" />
   </head>
-  <body ng-controller="galleryCtrl">
+  <body>
 
-    <div>
+    <div ng-controller="galleryCtrl">
       <h1>Galleries</h1>
+      <p>
+        <input type="text" ng-model="galleryTitle" />
+        <button ng-click="add(gallery)">Ajouter</button>
+      </p>
       <ul>
         <li ng-repeat="gallery in galleries">
           {{ gallery.title }}
