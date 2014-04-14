@@ -1,12 +1,25 @@
 <?php
-require_once __DIR__.'/../vendor/autoload.php'; 
+require_once __DIR__.'/../vendor/autoload.php';
 
-$app = new Silex\Application(); 
+use JDesrosiers\Silex\Provider\CorsServiceProvider;
+
+// App
+$app = new Silex\Application();
 $app['debug'] = true;
 
-$app->get('/hello/{name}', function($name) use($app) { 
-    return 'Hello '.$app->escape($name); 
-}); 
+// Initialization
+$app->register(new CorsServiceProvider(), array(
+    "cors.allowOrigin" => "http://localhost",
+));
+
+// Routes
+$app->get('/admin/upload', function() use ($app) {
+    $request = $app['request'];
+
+    return print_r($request->files, true);
+});
+
+$app->after($app["cors"]);
 
 $app->run();
 
