@@ -1,6 +1,7 @@
 {
     "require": {
         "silex/silex": "~1.2", 
-        "jdesrosiers/silex-cors-provider": "~0.1"
+        "jdesrosiers/silex-cors-provider": "~0.1", 
+        "flowjs/flow-php-server": "dev-master"
     }
 }

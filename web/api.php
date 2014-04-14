@@ -16,7 +16,15 @@ $app->register(new CorsServiceProvider(), array(
 $app->get('/admin/upload', function() use ($app) {
     $request = $app['request'];
 
-    return print_r($request->files, true);
+    if (\Flow\Basic::save('/tmp/final_file_destination', '/tmp/chunks_temp_folder')) {
+        echo "\nSaved!";
+    }
+    else {
+        // This is not a final chunk or request is invalid, continue to upload.
+        echo "\nNot final or invalid..";
+    }
+
+    return 1;
 });
 
 $app->after($app["cors"]);
