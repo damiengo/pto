@@ -6,11 +6,8 @@ var ptoApp = angular.module("ptoApp", ['flow']);
 // Configuration
 ptoApp.config(['flowFactoryProvider', function (flowFactoryProvider) {
   flowFactoryProvider.defaults = {
-    target: 'http://localhost:8888/admin/upload',
-    permanentErrors: [404, 500, 501],
-    maxChunkRetries: 1,
-    chunkRetryInterval: 5000,
-    simultaneousUploads: 4
+    target:'http://localhost/pto/web/test/upload.php'
+//    target:'http://localhost/pto/web/api.php'
   };
   flowFactoryProvider.on('catchAll', function (event) {
     console.log('catchAll', arguments);

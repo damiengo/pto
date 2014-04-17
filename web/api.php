@@ -13,56 +13,52 @@ $app->register(new CorsServiceProvider(), array(
 ));
 
 // Routes
-$app->match('/admin/upload', function() use ($app) {
-    //if (\Flow\Basic::save('/tmp/final_file_destination', '/tmp/chunks_temp_folder')) {
-    //    echo "\nSaved!";
-    //}
-    //else {
-        // This is not a final chunk or request is invalid, continue to upload.
-    //    echo "\nNot final or invalid..";
-    //}
+//$app->match('/admin/upload', function() use ($app) {
+$app->match('/', function() use ($app) {
+
+    $tempDir = __DIR__ . DIRECTORY_SEPARATOR . 'temp';
+if (!file_exists($tempDir)) {
+	mkdir($tempDir);
+}
+
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+  $number     = $_POST['flowChunkNumber'];
+  $id         = $_POST['flowIdentifier'];
+  $final_dir  = $tempDir . DIRECTORY_SEPARATOR . $id;
+  mkdir($final_dir);
+  $final_path = $final_dir . '/chunck.part' . $number;
+  $origi_path = $_FILES['file']['tmp_name'];
+  move_uploaded_file($origi_path, $final_path);
+}
+
+if ($_SERVER['REQUEST_METHOD'] === 'GET') {
+  $chunkDir = $tempDir . DIRECTORY_SEPARATOR . $_GET['flowIdentifier'];
+  echo $chunkDir;
+  echo "====";
+  $chunkFile = $chunkDir.'/chunck.part'.$_GET['flowChunkNumber'];
+  echo $chunkFile;
+  echo "****";
+	if (file_exists($chunkFile)) {
+		header("HTTP/1.0 200 Ok");
+	} else {
+		header("HTTP/1.0 404 Not Found");
+	}
+}
 
 
-
-    $config = new \Flow\Config();
-    $config->setTempDir('/tmp/chunks_temp_folder');
-    $file = new \Flow\File($config);
-
-    if ($_SERVER['REQUEST_METHOD'] === 'GET') {
-        print_r($_FILES);
-        if ($file->checkChunk()) {
-            header("HTTP/1.1 200 Ok");
-            echo "check ok";
-        }
-        else {
-            header("HTTP/1.1 404 Not Found");
-            print_r($file);
-            echo "check ko";
-            return 0;
-        }
-    }
-    else {
-        if ($file->validateChunk()) {
-            echo "chunk validated";
-            $file->saveChunk();
-        }
-        else {
-            // error, invalid chunk upload request, retry
-            header("HTTP/1.1 400 Bad Request");
-            echo "chunk unvalidated";
-            return 0;
-        }
-    }
-    if ($file->validateFile() && $file->save('/tmp/final_file_name')) {
-        // File upload was completed
-        echo "upload completed";
-    }
-    else {
-        // This is not a final chunk, continue to upload
-        echo "not final chunk";
-    }
-
-    return 1;
+    // Just imitate that the file was uploaded and stored.
+    return $app->json(json_encode([
+        'success' => true,
+        'files' => $_FILES,
+        'get' => $_GET,
+        'post' => $_POST,
+        //optional
+        'flowTotalSize' => isset($_FILES['file']) ? $_FILES['file']['size'] : $_GET['flowTotalSize'],
+        'flowIdentifier' => isset($_FILES['file']) ? $_FILES['file']['name'] . '-' . $_FILES['file']['size']
+            : $_GET['flowIdentifier'],
+        'flowFilename' => isset($_FILES['file']) ? $_FILES['file']['name'] : $_GET['flowFilename'],
+        'flowRelativePath' => isset($_FILES['file']) ? $_FILES['file']['tmp_name'] : $_GET['flowRelativePath']
+    ]), 200);
 });
 
 $app->after($app["cors"]);
