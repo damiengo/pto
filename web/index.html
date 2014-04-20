@@ -3,7 +3,6 @@
   <head>
     <title>Pto</title>
     <link href="bower_components/bootstrap/dist/css/bootstrap.min.css" rel="stylesheet" />
-    <link href="bower_components/bootstrap/dist/css/bootstrap-theme.min.css" rel="stylesheet" />
     <meta name="viewport" content="width=device-width, initial-scale=1">
   </head>
   <body>
@@ -39,19 +38,27 @@
             </ul>
           </div>
           <div class="col-md-8">
-            Images
-            <div flow-init>
-              <ul ng-repeat="file in $flow.files">
-                <li>{{ file.name }}</li>
-              </ul>
-              <span class="btn btn-small btn-info" flow-btn><i class="icon icon-file"></i>Upload File</span>
-              <a class="btn btn-small btn-success" ng-click="$flow.resume()">Upload</a>
+            <div flow-init
+                 flow-files-submitted="$flow.upload()">
+              <span class="btn btn-small btn-info" flow-btn><i class="icon icon-file"></i>Ajouter des images</span>
+              <p>
+              <div class="progress progress-striped" ng-class="active">
+                <div class="progress-bar" role="progressbar"
+                                            aria-valuenow="{{$flow.progress() * 100}}"
+                                            aria-valuemin="0"
+                                            aria-valuemax="100"
+                                            ng-style="{width: ($flow.progress() * 100) + '%'}">
+                  <span class="sr-only">{{$flow.progress()}}% Complete</span>
+                </div>
+              </div>
               <div class="row">
-                <div class="col-xs-6 col-md-3">
+                <!--
+                <div class="col-xs-6 col-md-3" ng-repeat="file in $flow.files">
                   <a href="#" class="thumbnail">
-                    <img flow-img="$flow.files[0]" class="img-rounded" />
+                    <img flow-img="file" class="img-rounded" />
                   </a>
                 </div>
+                -->
               </div>
             </div>
           </div>
