@@ -23,6 +23,17 @@
     </nav>
 
     <div class="container">
+
+      <!-- Authentication -->
+      <div ng-controller="UserCtrl">
+        <form ng-submit="submit()">
+          <input ng-model="user.username" type="text" name="user" placeholder="Username" />
+          <input ng-model="user.password" type="password" name="pass" placeholder="Password" />
+          <input type="submit" value="Login" />
+        </form>
+      </div>
+
+      <!-- Gallery -->
       <div ng-controller="galleryCtrl">
         <h1>Galeries</h1>
         <div class="row">

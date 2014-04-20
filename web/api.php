@@ -15,7 +15,6 @@ $app->register(new CorsServiceProvider(), array(
 
 // Routes
 $app->match('/admin/upload', function() use ($app) {
-//$app->match('/', function() use ($app) {
 
     $tmpDir   = '/tmp/pto/';
     $finalDir = '/tmp/pto/';
