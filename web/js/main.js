@@ -1,7 +1,7 @@
 'use strict';
 
 // Globals
-var api = "http://localhost:8888";
+var api = "http://localhost/pto/web/api.php";
 
 // Declaring the app
 var ptoApp = angular.module("ptoApp", ['flow']);
@@ -15,18 +15,20 @@ ptoApp.config(['flowFactoryProvider', function (flowFactoryProvider) {
 
 // User controller
 ptoApp.controller("UserCtrl", function ($scope, $http, $window) {
-  $scope.user = {username: 'saby', password: 'da'};
+  $scope.user    = {username: "", password: ""};
   $scope.message = "";
-  $scope.submit = function () {
+  $scope.submit  = function () {
     $http
-      .post(api+"/authenticate", $scope.user)
+      .post(api+"/admin/authenticate", $scope.user)
       .success(function (data, status, headers, config) {
         $window.sessionStorage.token = data.token;
+        $scope.user.authenticated = true;
         $scope.message = 'Welcome';
       })
       .error(function (data, status, headers, config) {
         // Erase the token if the user fails to log in
         delete $window.sessionStorage.token;
+        $scope.user.authenticated = false;
 
         // Handle login errors here
         $scope.message = 'Error: Invalid user or password';

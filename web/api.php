@@ -1,19 +1,29 @@
 <?php
 require_once __DIR__.'/../vendor/autoload.php';
 
-use JDesrosiers\Silex\Provider\CorsServiceProvider;
+use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Response;
 
-// App
+/** App **/
 $app = new Silex\Application();
 $app['debug'] = true;
 
-// Initialization
-$app->register(new CorsServiceProvider(), array(
-    "cors.allowOrigin" => "http://localhost",
-    "cors.allowMethods" => "GET,POST,OPTIONS,PUT"
-));
+/** After app **/
+$app->after(function (Request $request, Response $response) {
+    $response->headers->set("Access-Control-Allow-Origin", "http://localhost");
+});
 
-// Routes
+/** Routes **/
+
+// Admin authetication
+$app->match('/admin/authenticate', function(Request $request) use ($app) {
+
+
+    return $app->json(['connected' => 'yes'], 200);
+
+});
+
+// Images uploading
 $app->match('/admin/upload', function() use ($app) {
 
     $tmpDir   = '/tmp/pto/';
@@ -63,8 +73,6 @@ $app->match('/admin/upload', function() use ($app) {
         'flowRelativePath' => isset($_FILES['file']) ? $_FILES['file']['tmp_name'] : $_GET['flowRelativePath']
     ], 200);
 });
-
-$app->after($app["cors"]);
 
 $app->run();
 
