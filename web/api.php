@@ -3,24 +3,38 @@ require_once __DIR__.'/../vendor/autoload.php';
 
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpFoundation\ParameterBag;
 
 /** App **/
 $app = new Silex\Application();
 $app['debug'] = true;
 
-/** After app **/
+/** Before App **/
+$app->before(function (Request $request) {
+    // JSON in http request content
+    if (0 === strpos($request->headers->get('Content-Type'), 'application/json')) {
+        $data = json_decode($request->getContent(), true);
+        $request->request = new ParameterBag(is_array($data) ? $data : array());
+    }
+});
+
+/** After App **/
 $app->after(function (Request $request, Response $response) {
     $response->headers->set("Access-Control-Allow-Origin", "http://localhost");
 });
 
 /** Routes **/
-
 // Admin authetication
 $app->match('/admin/authenticate', function(Request $request) use ($app) {
+    $username = (string) $request->get("username");
+    $password = (string) $request->get("password");
 
-
-    return $app->json(['connected' => 'yes'], 200);
-
+    if($username === "saby" && $password === "da") {
+        return $app->json(['connected' => true, 'username' => $username], 200);
+    }
+    else {
+        return $app->json(['connected' => false, 'username' => $username], 403);
+    }
 });
 
 // Images uploading
