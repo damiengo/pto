@@ -25,16 +25,22 @@
     <div class="container">
 
       <!-- Authentication -->
-      <div ng-controller="UserCtrl" ng-hide="user.authenticated">
-        <form ng-submit="submit()">
-          <input ng-model="user.username" type="text" name="user" placeholder="Username" />
-          <input ng-model="user.password" type="password" name="pass" placeholder="Password" />
-          <input type="submit" value="Login" />
+      <div ng-controller="UserCtrl" ng-show="!isLogged()" class="row">
+        <form ng-submit="submit()" class="col-md-2">
+          <p>
+            <input ng-model="user.username" type="text" name="user" placeholder="Username" />
+          </p>
+          <p>
+            <input ng-model="user.password" type="password" name="pass" placeholder="Password" />
+          </p>
+          </p>
+            <input type="submit" value="Login" class="btn btn-primary" />
+          </p>
         </form>
       </div>
 
       <!-- Gallery -->
-      <div ng-controller="galleryCtrl" ng-show="user.authenticated">
+      <div ng-controller="galleryCtrl" ng-show="isLogged()">
         <h1>Galeries</h1>
         <div class="row">
           <div class="col-md-4">

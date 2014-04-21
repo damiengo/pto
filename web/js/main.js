@@ -13,31 +13,52 @@ ptoApp.config(['flowFactoryProvider', function (flowFactoryProvider) {
   };
 }]);
 
+// Service
+ptoApp.service("UserService", [function() {
+  var user = {
+    isLogged: false,
+    username: ""
+  };
+
+  return user;
+}]);
+
 // User controller
-ptoApp.controller("UserCtrl", function ($scope, $http, $window) {
+ptoApp.controller("UserCtrl", ["$scope", "$http", "$window", "UserService", function ($scope, $http, $window, userService) {
   $scope.user    = {username: "", password: ""};
   $scope.message = "";
+
+  /**
+   * User authentication.
+   */
   $scope.submit  = function () {
     $http
       .post(api+"/admin/authenticate", $scope.user)
       .success(function (data, status, headers, config) {
         $window.sessionStorage.token = data.token;
-        $scope.user.authenticated = true;
+        userService.isLogged = true;
         $scope.message = 'Welcome';
       })
       .error(function (data, status, headers, config) {
         // Erase the token if the user fails to log in
         delete $window.sessionStorage.token;
-        $scope.user.authenticated = false;
+        userService.isLogged = false;
 
         // Handle login errors here
         $scope.message = 'Error: Invalid user or password';
       });
   };
-});
+
+  /**
+   * Has log in form
+   */
+  $scope.isLogged = function() {
+    return userService.isLogged;
+  };
+}]);
 
 // Gallery controller
-ptoApp.controller("galleryCtrl", function($scope) {
+ptoApp.controller("galleryCtrl", ["$scope", "UserService", function($scope, userService) {
 
   /** Init datas **/
   $scope.galleries = [
@@ -59,4 +80,11 @@ ptoApp.controller("galleryCtrl", function($scope) {
     }
   }
 
-});
+  /**
+   * Has access.
+   */
+  $scope.isLogged = function() {
+    return userService.isLogged;
+  };
+
+}]);
