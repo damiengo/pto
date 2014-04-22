@@ -58,7 +58,7 @@ ptoApp.controller("UserCtrl", ["$scope", "$http", "$window", "UserService", func
 }]);
 
 // Gallery controller
-ptoApp.controller("galleryCtrl", ["$scope", "UserService", function($scope, userService) {
+ptoApp.controller("galleryCtrl", ["$scope", "$http", "UserService", function($scope, $http, userService) {
 
   /** Init datas **/
   $scope.galleries = [
@@ -72,11 +72,15 @@ ptoApp.controller("galleryCtrl", ["$scope", "UserService", function($scope, user
    *
    */
   $scope.add = function() {
-  	if($scope.galleryTitle != "") {
-      $scope.galleries.push({
-      	title: $scope.galleryTitle
-      });
-      $scope.galleryTitle = "";
+    if($scope.galleryTitle != "") {
+      $http.post(api+"/admin/gallery", {title: $scope.galleryTitle})
+        .success(function() {
+          $scope.galleries.push({
+      	    title: $scope.galleryTitle
+          });
+          $scope.galleryTitle = "";
+        })
+        .error(function() {});
     }
   }
 

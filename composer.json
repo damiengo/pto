@@ -2,6 +2,7 @@
     "require": {
         "silex/silex": "~1.2", 
         "jdesrosiers/silex-cors-provider": "~0.1", 
-        "flowjs/flow-php-server": "dev-master"
+        "flowjs/flow-php-server": "dev-master", 
+        "doctrine/dbal": "2.2.*"
     }
 }

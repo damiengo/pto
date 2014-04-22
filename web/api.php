@@ -9,6 +9,33 @@ use Symfony\Component\HttpFoundation\ParameterBag;
 $app = new Silex\Application();
 $app['debug'] = true;
 
+/** Database access **/
+$app->register(new Silex\Provider\DoctrineServiceProvider(), array(
+    'db.options' => array(
+        'driver'   => 'pdo_sqlite',
+        'path'     => __DIR__.'/app.db',
+    ),
+));
+
+/** Init database **/
+$schema = new \Doctrine\DBAL\Schema\Schema();
+$galleriesTable = $schema->createTable("galleries");
+$galleriesTable->addColumn("id", "integer", array("unsigned" => true));
+$galleriesTable->addColumn("title", "string", array("length" => 32));
+$galleriesTable->setPrimaryKey(array("id"));
+$galleriesTable->addUniqueIndex(array("title"));
+
+$sqls = $schema->toSql($app["db"]->getDatabasePlatform());
+
+foreach($sqls as $sql) {
+    try {
+        $app["db"]->query($sql);
+    }
+    catch(\Exception $e) {
+
+    }
+}
+
 /** Before App **/
 $app->before(function (Request $request) {
     // JSON in http request content
@@ -37,8 +64,18 @@ $app->match('/admin/authenticate', function(Request $request) use ($app) {
     }
 });
 
+// Adding a gallery
+$app->post('/admin/gallery', function(Request $request) use ($app) {
+    $title = $request->get("title", "");
+    if($title !== "") {
+        $app["db"]->insert("galleries", array("title" => $title));
+    }
+
+    return $app->json(['added' => true, 'title' => $title], 200);
+});
+
 // Images uploading
-$app->match('/admin/upload', function() use ($app) {
+$app->match('/admin/upload', function(Request $request) use ($app) {
 
     $tmpDir   = '/tmp/pto/';
     $finalDir = '/tmp/pto/';
