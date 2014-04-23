@@ -67,6 +67,16 @@ $app->get('admin/galleries', function(Request $request) use ($app) {
     return $app->json($galleries, 200);
 });
 
+// List pictures
+$app->get('admin/images/{galleryId}', function(Request $request) use ($app) {
+    $statement = $app["db"]->prepare("SELECT id, name FROM images WHERE gallery_id = ?");
+    $statement->bindValue(1, $galleryId);
+    $statement->execute();
+    $galleries = $statement->fetchAll();
+
+    return $app->json($galleries, 200);
+});
+
 // Images uploading
 $app->match('/admin/upload', function(Request $request) use ($app) {
 
