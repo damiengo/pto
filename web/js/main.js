@@ -67,6 +67,16 @@ ptoApp.controller("galleryCtrl", ["$scope", "$http", "UserService", function($sc
     {'title': 'Gallery 3'}
   ];
 
+  /** Init galleries **/
+  $http.get(api+"/admin/galleries")
+    .success(function(data, status, headers, config) {
+      $scope.galleries = data;
+      
+    })
+    .error(function(data, status, headers, config) {
+    }
+  );
+
   /**
    * Adding a new gallery.
    *

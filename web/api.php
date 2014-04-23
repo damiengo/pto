@@ -74,6 +74,15 @@ $app->post('/admin/gallery', function(Request $request) use ($app) {
     return $app->json(['added' => true, 'title' => $title], 200);
 });
 
+// List galleries
+$app->get('admin/galleries', function(Request $request) use ($app) {
+    $statement = $app["db"]->prepare("SELECT id, title FROM galleries");
+    $statement->execute();
+    $galleries = $statement->fetchAll();
+
+    return $app->json($galleries, 200);
+});
+
 // Images uploading
 $app->match('/admin/upload', function(Request $request) use ($app) {
 
