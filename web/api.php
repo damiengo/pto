@@ -12,29 +12,13 @@ $app['debug'] = true;
 /** Database access **/
 $app->register(new Silex\Provider\DoctrineServiceProvider(), array(
     'db.options' => array(
-        'driver'   => 'pdo_sqlite',
-        'path'     => __DIR__.'/app.db',
+        'driver'   => 'pdo_mysql',
+        'host'     => '127.0.0.1',
+        'dbname'   => 'pto',
+        'user'     => 'root',
+        'password' => ''
     ),
 ));
-
-/** Init database **/
-$schema = new \Doctrine\DBAL\Schema\Schema();
-$galleriesTable = $schema->createTable("galleries");
-$galleriesTable->addColumn("id", "integer", array("unsigned" => true));
-$galleriesTable->addColumn("title", "string", array("length" => 32));
-$galleriesTable->setPrimaryKey(array("id"));
-$galleriesTable->addUniqueIndex(array("title"));
-
-$sqls = $schema->toSql($app["db"]->getDatabasePlatform());
-
-foreach($sqls as $sql) {
-    try {
-        $app["db"]->query($sql);
-    }
-    catch(\Exception $e) {
-
-    }
-}
 
 /** Before App **/
 $app->before(function (Request $request) {

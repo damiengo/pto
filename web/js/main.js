@@ -71,7 +71,6 @@ ptoApp.controller("galleryCtrl", ["$scope", "$http", "UserService", function($sc
   $http.get(api+"/admin/galleries")
     .success(function(data, status, headers, config) {
       $scope.galleries = data;
-      
     })
     .error(function(data, status, headers, config) {
     }
@@ -92,6 +91,19 @@ ptoApp.controller("galleryCtrl", ["$scope", "$http", "UserService", function($sc
         })
         .error(function() {});
     }
+  };
+
+  /**
+   * Get a gallery images.
+   *
+   * @param galleryId
+   */
+  $scope.images = function(galleryId) {
+    $http.get(api+"/admin/images", {galleryId: galleryId})
+      .success(function(data, status) {
+        
+      })
+      .error(function(data, status) {});
   }
 
   /**
