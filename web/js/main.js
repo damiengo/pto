@@ -70,6 +70,9 @@ ptoApp.controller("galleryCtrl", ["$scope", "$http", "UserService", function($sc
   /** Selected gallery id **/
   $scope.selectedGalleryId = null;
 
+  /** Flow uploader **/
+  $scope.uploader = {};
+
   /** Init galleries **/
   $http.get(api+"/admin/galleries")
     .success(function(data, status, headers, config) {
@@ -103,11 +106,19 @@ ptoApp.controller("galleryCtrl", ["$scope", "$http", "UserService", function($sc
    */
   $scope.images = function(galleryId) {
     $scope.selectedGalleryId = galleryId;
-    $http.get(api+"/admin/images", {galleryId: galleryId})
+    $http.get(api+"/admin/images/"+galleryId)
       .success(function(data, status) {
         
       })
       .error(function(data, status) {});
+  }
+
+  /**
+   * Add images.
+   */
+  $scope.upload = function() {
+    $scope.uploader.flow.opts.query = {galleryId: $scope.selectedGalleryId};
+    $scope.uploader.flow.upload();
   }
 
   /**

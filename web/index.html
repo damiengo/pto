@@ -28,10 +28,10 @@
       <div ng-controller="UserCtrl" ng-show="!isLogged()" class="row">
         <form ng-submit="submit()" class="col-md-2">
           <p>
-            <input ng-model="user.username" type="text" name="user" placeholder="Username" />
+            <input ng-model="user.username" type="text" name="user" placeholder="Login" />
           </p>
           <p>
-            <input ng-model="user.password" type="password" name="pass" placeholder="Password" />
+            <input ng-model="user.password" type="password" name="pass" placeholder="Mot de passe" />
           </p>
           </p>
             <input type="submit" value="Login" class="btn btn-primary" />
@@ -41,22 +41,23 @@
 
       <!-- Gallery -->
       <div ng-controller="galleryCtrl" ng-show="isLogged()">
-        <h1>Galeries</h1>
+        <h3>Galeries</h3>
         <div class="row">
-          <div class="col-md-4">
-            <p>
-              <input type="text" ng-model="galleryTitle" />
-              <button ng-click="add(gallery)">Ajouter</button>
-            </p>
+          <div class="col-md-3">
             <ul class="nav nav-pills nav-stacked">
               <li ng-repeat="gallery in galleries" ng-class="{active: selectedGalleryId === gallery.id}">
                 <a href="#" ng-click="images(gallery.id)">{{ gallery.title }}</a>
               </li>
             </ul>
+            <p>
+              <input type="text" ng-model="galleryTitle" placeholder="Titre" />
+              <button ng-click="add(gallery)">Ajouter</button>
+            </p>
           </div>
-          <div class="col-md-8">
+          <div class="col-md-9">
             <div flow-init
-                 flow-files-submitted="$flow.upload()">
+                 flow-name="uploader.flow"
+                 flow-files-submitted="upload()">
               <span class="btn btn-small btn-info" flow-btn><i class="icon icon-file"></i>Ajouter des images</span>
               <p>
               <div class="progress progress-striped" ng-class="active">

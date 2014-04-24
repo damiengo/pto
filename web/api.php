@@ -68,7 +68,7 @@ $app->get('admin/galleries', function(Request $request) use ($app) {
 });
 
 // List pictures
-$app->get('admin/images/{galleryId}', function(Request $request) use ($app) {
+$app->get('admin/images/{galleryId}', function(Request $request, $galleryId) use ($app) {
     $statement = $app["db"]->prepare("SELECT id, name FROM images WHERE gallery_id = ?");
     $statement->bindValue(1, $galleryId);
     $statement->execute();
@@ -107,6 +107,7 @@ $app->match('/admin/upload', function(Request $request) use ($app) {
     $success = false;
     if ($file->validateFile() && $file->save($finalDir.$_POST['flowFilename'])) {
       // File upload was completed
+      $app["db"]->insert("images", array("name" => $_POST['flowFilename'], "galleryId" => $request->get("galleryId")));
       $success = true;
     }
     else {
