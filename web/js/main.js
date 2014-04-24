@@ -67,6 +67,9 @@ ptoApp.controller("galleryCtrl", ["$scope", "$http", "UserService", function($sc
     {'title': 'Gallery 3'}
   ];
 
+  /** Selected gallery id **/
+  $scope.selectedGalleryId = null;
+
   /** Init galleries **/
   $http.get(api+"/admin/galleries")
     .success(function(data, status, headers, config) {
@@ -99,6 +102,7 @@ ptoApp.controller("galleryCtrl", ["$scope", "$http", "UserService", function($sc
    * @param galleryId
    */
   $scope.images = function(galleryId) {
+    $scope.selectedGalleryId = galleryId;
     $http.get(api+"/admin/images", {galleryId: galleryId})
       .success(function(data, status) {
         
