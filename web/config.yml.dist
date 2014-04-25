@@ -4,3 +4,8 @@ database:
     dbname:   pto
     user:     
     password:
+upload:
+    tmp_dir:       /tmp/pto/
+    final_dir:     /tmp_pto/
+    original_dir:  original/
+    thumbnail_dir: thumbnail/

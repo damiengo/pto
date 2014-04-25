@@ -4,6 +4,8 @@ require_once __DIR__.'/../vendor/autoload.php';
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\ParameterBag;
+use Imagine\Image\Box;
+use Neutron\Silex\Provider\ImagineServiceProvider;
 
 /** App **/
 $app = new Silex\Application();
@@ -22,6 +24,9 @@ $app->register(new Silex\Provider\DoctrineServiceProvider(), array(
         'password' => $app["config"]["database"]["password"]
     ),
 ));
+
+/** Image resizing **/
+$app->register(new ImagineServiceProvider());
 
 /** Before App **/
 $app->before(function (Request $request) {
@@ -83,8 +88,10 @@ $app->get('admin/images/{galleryId}', function(Request $request, $galleryId) use
 // Images uploading
 $app->match('/admin/upload', function(Request $request) use ($app) {
 
-    $tmpDir   = '/tmp/pto/';
-    $finalDir = '/tmp/pto/';
+    $tmpDir       = $app["config"]["upload"]["tmp_dir"];
+    $finalDir     = $app["config"]["upload"]["final_dir"];
+    $originalDir  = $app["config"]["upload"]["original_dir"];
+    $thumbnailDir = $app["config"]["upload"]["thumbnail_dir"];
 
     $config = new \Flow\Config();
     $config->setTempDir($tmpDir);
@@ -108,9 +115,22 @@ $app->match('/admin/upload', function(Request $request) use ($app) {
         }
     }
     $success = false;
-    if ($file->validateFile() && $file->save($finalDir.$_POST['flowFilename'])) {
+    $originalPath  = $finalDir.$originalDir;
+    $thumbnailPath = $finalDir.$thumbnailDir;
+    if( ! file_exists($originalPath)) {
+        mkdir($originalPath);
+    }
+    if( ! file_exists($thumbnailPath)) {
+        mkdir($thumbnailPath);
+    }
+    if ($file->validateFile() && $file->save($originalPath.$_POST['flowFilename'])) {
+      // Resizing
+      $app["imagine"]
+            ->open($originalPath.$_POST["flowFilename"])
+            ->resize(new Box(320, 240))
+            ->save($thumbnailPath.$_POST["flowFilename"]);
       // File upload was completed
-      $app["db"]->insert("images", array("name" => $_POST['flowFilename'], "galleryId" => $request->get("galleryId")));
+      $app["db"]->insert("images", array("name" => $_POST['flowFilename'], "gallery_id" => $request->get("galleryId")));
       $success = true;
     }
     else {

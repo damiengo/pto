@@ -4,6 +4,7 @@
         "jdesrosiers/silex-cors-provider": "~0.1", 
         "flowjs/flow-php-server": "dev-master", 
         "doctrine/dbal": "2.2.*", 
-        "deralex/yaml-config-service-provider": "1.0.x-dev"
+        "deralex/yaml-config-service-provider": "1.0.x-dev", 
+        "neutron/silex-imagine-provider": "*"
     }
 }
