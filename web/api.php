@@ -9,14 +9,17 @@ use Symfony\Component\HttpFoundation\ParameterBag;
 $app = new Silex\Application();
 $app['debug'] = true;
 
+/** Config **/
+$app->register(new DerAlex\Silex\YamlConfigServiceProvider("config.yml"));
+
 /** Database access **/
 $app->register(new Silex\Provider\DoctrineServiceProvider(), array(
     'db.options' => array(
-        'driver'   => 'pdo_mysql',
-        'host'     => '127.0.0.1',
-        'dbname'   => 'pto',
-        'user'     => 'root',
-        'password' => ''
+        'driver'   => $app["config"]["database"]["driver"],
+        'host'     => $app["config"]["database"]["host"],
+        'dbname'   => $app["config"]["database"]["dbname"],
+        'user'     => $app["config"]["database"]["user"],
+        'password' => $app["config"]["database"]["password"]
     ),
 ));
 
