@@ -4,12 +4,12 @@
 var api = "http://localhost/pto/web/api.php";
 
 // Declaring the app
-var ptoApp = angular.module("ptoApp", ['flow']);
+var ptoApp = angular.module("ptoApp", ["config", "flow"]);
 
 // Configuration
-ptoApp.config(['flowFactoryProvider', function (flowFactoryProvider) {
+ptoApp.config(["flowFactoryProvider", "ENV", function (flowFactoryProvider, ENV) {
   flowFactoryProvider.defaults = {
-    target: api+"/admin/upload"
+    target: ENV.api+"/admin/upload"
   };
 }]);
 
@@ -24,7 +24,7 @@ ptoApp.service("UserService", [function() {
 }]);
 
 // User controller
-ptoApp.controller("UserCtrl", ["$scope", "$http", "$window", "UserService", function ($scope, $http, $window, userService) {
+ptoApp.controller("UserCtrl", ["$scope", "$http", "$window", "UserService", "ENV", function ($scope, $http, $window, userService, ENV) {
   $scope.user    = {username: "", password: ""};
   $scope.message = "";
 
@@ -33,7 +33,7 @@ ptoApp.controller("UserCtrl", ["$scope", "$http", "$window", "UserService", func
    */
   $scope.submit  = function () {
     $http
-      .post(api+"/admin/authenticate", $scope.user)
+      .post(ENV.api+"/admin/authenticate", $scope.user)
       .success(function (data, status, headers, config) {
         $window.sessionStorage.token = data.token;
         userService.isLogged = true;
@@ -58,19 +58,19 @@ ptoApp.controller("UserCtrl", ["$scope", "$http", "$window", "UserService", func
 }]);
 
 // Gallery controller
-ptoApp.controller("galleryCtrl", ["$scope", "$http", "UserService", function($scope, $http, userService) {
+ptoApp.controller("galleryCtrl", ["$scope", "$http", "UserService", "ENV", function($scope, $http, userService, ENV) {
 
   /** Images list **/
-  $scope.images = [];
+  $scope.imagesList = [];
 
-  /** Selected gallery id **/
-  $scope.selectedGalleryId = null;
+  /** Selected gallery **/
+  $scope.selectedGallery = null;
 
   /** Flow uploader **/
   $scope.uploader = {};
 
   /** Init galleries **/
-  $http.get(api+"/admin/galleries")
+  $http.get(ENV.api+"/admin/galleries")
     .success(function(data, status, headers, config) {
       $scope.galleries = data;
     })
@@ -84,9 +84,10 @@ ptoApp.controller("galleryCtrl", ["$scope", "$http", "UserService", function($sc
    */
   $scope.add = function() {
     if($scope.galleryTitle != "") {
-      $http.post(api+"/admin/gallery", {title: $scope.galleryTitle})
-        .success(function() {
+      $http.post(ENV.api+"/admin/gallery", {title: $scope.galleryTitle})
+        .success(function(data) {
           $scope.galleries.push({
+            id:    data.id, 
       	    title: $scope.galleryTitle
           });
           $scope.galleryTitle = "";
@@ -96,26 +97,42 @@ ptoApp.controller("galleryCtrl", ["$scope", "$http", "UserService", function($sc
   };
 
   /**
+   * Delete current gallery.
+   */
+  $scope.delete = function() {
+    if($scope.selectedGallery != null) {
+      $http.post(ENV.api+"/admin/delete_gallery", {id: $scope.selectedGallery.id})
+        .success(function() {
+          var index = $scope.galleries.indexOf($scope.selectedGallery);
+          $scope.galleries.splice(index, 1);
+          $scope.selectedGallery = null;
+          $("#deleteModal").modal("hide");
+        })
+        .error();
+    }
+  }
+
+  /**
    * Get a gallery images.
    *
-   * @param galleryId
+   * @param gallery
    */
-  $scope.images = function(galleryId) {
-    $scope.selectedGalleryId = galleryId;
-    $http.get(api+"/admin/images/"+galleryId)
+  $scope.images = function(gallery) {
+    $scope.selectedGallery = gallery;
+    $http.get(ENV.api+"/admin/images/"+gallery.id)
       .success(function(data, status) {
-        $scope.images = data;
+        $scope.imagesList = data;
       })
       .error(function(data, status) {});
-  }
+  };
 
   /**
    * Add images.
    */
   $scope.upload = function() {
-    $scope.uploader.flow.opts.query = {galleryId: $scope.selectedGalleryId};
+    $scope.uploader.flow.opts.query = {galleryId: $scope.selectedGallery.id};
     $scope.uploader.flow.upload();
-  }
+  };
 
   /**
    * Has access.

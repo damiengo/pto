@@ -63,7 +63,37 @@ $app->post('/admin/gallery', function(Request $request) use ($app) {
         $app["db"]->insert("galleries", array("title" => $title));
     }
 
-    return $app->json(['added' => true, 'title' => $title], 200);
+    return $app->json(['added' => true, 'id' => $app["db"]->lastInsertId(), 'title' => $title], 200);
+});
+
+// Deleting a gallery
+$app->post('/admin/delete_gallery', function(Request $request) use ($app) {
+    $id = $request->get("id", "");
+    if($id !== "") {
+        $finalDir     = $app["config"]["upload"]["final_dir"];
+        $originalDir  = $app["config"]["upload"]["original_dir"];
+        $thumbnailDir = $app["config"]["upload"]["thumbnail_dir"];
+        // Cleaning images
+        $statement = $app["db"]->prepare("SELECT * FROM images WHERE gallery_id = ?");
+        $statement->bindValue(1, $id);
+        $statement->execute();
+        $images = $statement->fetchAll();
+        foreach($images as $image) {
+            if(file_exists($finalDir.$originalDir.$image["name"])) {
+                unlink($finalDir.$originalDir.$image["name"]);
+            }
+            if(file_exists($finalDir.$thumbnailDir.$image["name"])) {
+                unlink($finalDir.$thumbnailDir.$image["name"]);
+            }
+        }
+        $app["db"]->delete("images", array("gallery_id" => $id));
+
+        // Deleting gallery
+        $app["db"]->delete("galleries", array("id" => $id));
+
+        return $app->json(array("success" => "Gallery deleted"), 200);
+    }
+    return $app->json(array("error" => "No gallery id given"), 418);
 });
 
 // List galleries

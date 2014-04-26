@@ -45,8 +45,8 @@
         <div class="row">
           <div class="col-md-3">
             <ul class="nav nav-pills nav-stacked">
-              <li ng-repeat="gallery in galleries" ng-class="{active: selectedGalleryId === gallery.id}">
-                <a href="#" ng-click="images(gallery.id)">{{ gallery.title }}</a>
+              <li ng-repeat="gallery in galleries" ng-class="{active: selectedGallery.id === gallery.id}">
+                <a href="#" ng-click="images(gallery)">{{ gallery.title }}</a>
               </li>
             </ul>
             <p>
@@ -57,9 +57,12 @@
           <div class="col-md-9">
             <div flow-init
                  flow-name="uploader.flow"
-                 flow-files-submitted="upload()">
-              <span class="btn btn-small btn-info" flow-btn><i class="icon icon-file"></i>Ajouter des images</span>
-              <p>
+                 flow-files-submitted="upload()"
+                 ng-hide="selectedGallery == null">
+              <div>
+                <span class="btn btn-small btn-info" flow-btn><i class="icon icon-file"></i>Ajouter des images</span>
+                <span class="btn btn-small btn-danger" data-toggle="modal" data-target="#deleteModal">Supprimer la galerie</span>
+              </div>
               <div class="progress progress-striped" ng-class="active">
                 <div class="progress-bar" role="progressbar"
                                             aria-valuenow="{{$flow.progress() * 100}}"
@@ -70,11 +73,28 @@
                 </div>
               </div>
               <div class="row">
-                <div class="col-xs-6 col-md-3" ng-repeat="image in images">
+                <div class="col-xs-6 col-md-3" ng-repeat="image in imagesList">
                   <a href="#" class="thumbnail">
                     <img ng-src="http://localhost/pto/web/uploads/thumbnail/{{ image.name }}" class="img-rounded" />
                   </a>
                 </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div id="deleteModal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="mySmallModalLabel" aria-hidden="true">
+          <div class="modal-dialog">
+            <div class="modal-content">
+              <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                <h4 class="modal-title" id="myModalLabel">Suppression</h4>
+              </div>
+              <div class="modal-body">
+                {{imagesList.length}} images seront supprimees...
+              </div>
+              <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">Annuler</button>
+                <button type="button" class="btn btn-danger" ng-click="delete()">Supprimer</button>
               </div>
             </div>
           </div>
@@ -84,6 +104,9 @@
 
     <script src="bower_components/angular/angular.js"></script>
     <script src="bower_components/ng-flow/dist/ng-flow-standalone.js"></script>
+    <script src="bower_components/jquery/dist/jquery.min.js"></script>
+    <script src="bower_components/bootstrap/dist/js/bootstrap.min.js"></script>
+    <script src="js/config.js"></script>
     <script src="js/main.js"></script>
   </body>
 </html>
