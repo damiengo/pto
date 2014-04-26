@@ -9,3 +9,6 @@ upload:
     final_dir:     /tmp_pto/
     original_dir:  original/
     thumbnail_dir: thumbnail/
+admin:
+    username: username
+    password: password

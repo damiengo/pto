@@ -62,7 +62,8 @@
               <div>
                 <span class="btn btn-small btn-info" flow-btn><i class="icon icon-file"></i>Ajouter des photos</span>
                 <span class="btn btn-small btn-danger" data-toggle="modal" data-target="#deleteModal">Supprimer la galerie</span>
-                <input type="text" ng-model="gallery.password" placeholder="Mot de passe" />
+                <input type="text" ng-model="selectedGallery.password" placeholder="Mot de passe" />
+                <span class="btn btn-small btn-info" ng-click="updatePassword(selectedGallery)">OK</span>
               </div>
               <div class="progress progress-striped" ng-class="active">
                 <div class="progress-bar" role="progressbar"

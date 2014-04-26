@@ -139,6 +139,19 @@ ptoApp.controller("galleryCtrl", ["$scope", "$http", "UserService", "ENV", funct
   };
 
   /**
+   * Updating gallery password.
+   *
+   * @param gallery
+   */
+  $scope.updatePassword = function(gallery) {
+    $http.post(ENV.api+"/admin/gallery_password", {id: gallery.id, password: gallery.password})
+      .success(function(data) {
+        
+      })
+      .error();
+  };
+
+  /**
    * Has access.
    */
   $scope.isLogged = function() {

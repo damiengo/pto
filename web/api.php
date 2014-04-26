@@ -48,7 +48,7 @@ $app->match('/admin/authenticate', function(Request $request) use ($app) {
     $username = (string) $request->get("username");
     $password = (string) $request->get("password");
 
-    if($username === "saby" && $password === "da") {
+    if($username === $app["config"]["admin"]["username"] && $password === $app["config"]["admin"]["password"]) {
         return $app->json(['connected' => true, 'username' => $username], 200);
     }
     else {
@@ -117,7 +117,11 @@ $app->get('admin/images/{galleryId}', function(Request $request, $galleryId) use
 
 // Reset gallery password
 $app->post('admin/gallery_password', function(Request $request) use ($app) {
-    
+    $id       = $request->get("id", "");
+    $password = $request->get("password", "");
+    $app["db"]->update("galleries", array("password" => $password), array("id" => $id));
+
+    return $app->json(array(), 200);
 });
 
 // Images uploading
