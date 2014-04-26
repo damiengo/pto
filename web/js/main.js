@@ -131,6 +131,9 @@ ptoApp.controller("galleryCtrl", ["$scope", "$http", "UserService", "ENV", funct
    */
   $scope.upload = function() {
     $scope.uploader.flow.opts.query = {galleryId: $scope.selectedGallery.id};
+    $scope.uploader.flow.on("complete", function() {
+      $scope.images($scope.selectedGallery);
+    });
     $scope.uploader.flow.upload();
   };
 
