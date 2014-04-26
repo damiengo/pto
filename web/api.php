@@ -115,6 +115,11 @@ $app->get('admin/images/{galleryId}', function(Request $request, $galleryId) use
     return $app->json($galleries, 200);
 });
 
+// Reset gallery password
+$app->post('admin/gallery_password', function(Request $request) use ($app) {
+    
+});
+
 // Images uploading
 $app->match('/admin/upload', function(Request $request) use ($app) {
 

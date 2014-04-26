@@ -87,8 +87,9 @@ ptoApp.controller("galleryCtrl", ["$scope", "$http", "UserService", "ENV", funct
       $http.post(ENV.api+"/admin/gallery", {title: $scope.galleryTitle})
         .success(function(data) {
           $scope.galleries.push({
-            id:    data.id, 
-      	    title: $scope.galleryTitle
+            id:       data.id, 
+      	    title:    $scope.galleryTitle, 
+            password: ""
           });
           $scope.galleryTitle = "";
         })
