@@ -60,12 +60,8 @@ ptoApp.controller("UserCtrl", ["$scope", "$http", "$window", "UserService", func
 // Gallery controller
 ptoApp.controller("galleryCtrl", ["$scope", "$http", "UserService", function($scope, $http, userService) {
 
-  /** Init datas **/
-  $scope.galleries = [
-    {'title': 'Gallery 1'},
-    {'title': 'Gallery 2'},
-    {'title': 'Gallery 3'}
-  ];
+  /** Images list **/
+  $scope.images = [];
 
   /** Selected gallery id **/
   $scope.selectedGalleryId = null;
@@ -108,7 +104,7 @@ ptoApp.controller("galleryCtrl", ["$scope", "$http", "UserService", function($sc
     $scope.selectedGalleryId = galleryId;
     $http.get(api+"/admin/images/"+galleryId)
       .success(function(data, status) {
-        
+        $scope.images = data;
       })
       .error(function(data, status) {});
   }

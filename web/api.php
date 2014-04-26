@@ -77,7 +77,7 @@ $app->get('admin/galleries', function(Request $request) use ($app) {
 
 // List pictures
 $app->get('admin/images/{galleryId}', function(Request $request, $galleryId) use ($app) {
-    $statement = $app["db"]->prepare("SELECT id, name FROM images WHERE gallery_id = ?");
+    $statement = $app["db"]->prepare("SELECT id, name FROM images WHERE gallery_id = ? ORDER BY created_at DESC");
     $statement->bindValue(1, $galleryId);
     $statement->execute();
     $galleries = $statement->fetchAll();
