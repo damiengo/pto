@@ -105,7 +105,7 @@ $app->post('/admin/delete_gallery', function(Request $request) use ($app) {
 
 // List galleries
 $app->get('admin/galleries', function(Request $request) use ($app) {
-    $statement = $app["db"]->prepare("SELECT id, title, password FROM galleries");
+    $statement = $app["db"]->prepare("SELECT id, title, password, slug FROM galleries");
     $statement->execute();
     $galleries = $statement->fetchAll();
 
@@ -209,6 +209,31 @@ $app->match('/admin/upload', function(Request $request) use ($app) {
         'flowFilename' => isset($_FILES['file']) ? $_FILES['file']['name'] : $_GET['flowFilename'],
         'flowRelativePath' => isset($_FILES['file']) ? $_FILES['file']['tmp_name'] : $_GET['flowRelativePath']
     ], 200);
+});
+
+// Check gallery password
+$app->get('gallery/check_password/{gallery_slug}/{password}', function(Request $request, $gallery_slug, $password) use ($app) {
+  $statement = $app["db"]->prepare("SELECT id, title, password, slug FROM galleries WHERE slug = ? AND password = ?");
+  $statement->bindValue(1, $gallery_slug);
+  $statement->bindValue(2, $password);
+  $statement->execute();
+  $galleries = $statement->fetchAll();
+
+  if(count($galleries) == 0) {
+    return $app->json(array("error" => "Authentication failed"), 403);
+  }
+
+  return $app->json(array("success" => true, "gallery" => $galleries[0]), 200);
+});
+
+// Get the gallery images
+$app->get('gallery/images/{id}', function(Request $request, $id) use ($app) {
+  $statement = $app["db"]->prepare("SELECT name FROM images WHERE gallery_id = ? ORDER BY created_at DESC");
+  $statement->bindValue(1, $id);
+  $statement->execute();
+  $images = $statement->fetchAll();
+
+  return $app->json(array("success" => true, "images" => $images), 200);
 });
 
 $app->run();
