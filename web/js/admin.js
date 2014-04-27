@@ -159,7 +159,7 @@ ptoApp.controller("galleryCtrl", ["$scope", "$http", "UserService", "ENV", funct
    * @return The path
    */
   $scope.getImageThumbnailPath = function(imageName) {
-    return ENV.uploads + "thumbnail/" + imageName;
+    return ENV.uploads + "thumbnail/" + $scope.selectedGallery.id + "/" + imageName;
   }
 
   /**

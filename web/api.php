@@ -71,8 +71,8 @@ $app->post('/admin/delete_gallery', function(Request $request) use ($app) {
     $id = $request->get("id", "");
     if($id !== "") {
         $finalDir     = $app["config"]["upload"]["final_dir"];
-        $originalDir  = $app["config"]["upload"]["original_dir"];
-        $thumbnailDir = $app["config"]["upload"]["thumbnail_dir"];
+        $originalDir  = $app["config"]["upload"]["original_dir"].$id.DIRECTORY_SEPARATOR;
+        $thumbnailDir = $app["config"]["upload"]["thumbnail_dir"].$id.DIRECTORY_SEPARATOR;
         // Cleaning images
         $statement = $app["db"]->prepare("SELECT * FROM images WHERE gallery_id = ?");
         $statement->bindValue(1, $id);
@@ -86,6 +86,13 @@ $app->post('/admin/delete_gallery', function(Request $request) use ($app) {
                 unlink($finalDir.$thumbnailDir.$image["name"]);
             }
         }
+        // Cleaning folder
+        if(file_exists($finalDir.$originalDir)) {
+            rmdir($finalDir.$originalDir);
+        }
+        if(file_exists($finalDir.$thumbnailDir)) {
+            rmdir($finalDir.$thumbnailDir);
+        }
         $app["db"]->delete("images", array("gallery_id" => $id));
 
         // Deleting gallery
@@ -98,7 +105,7 @@ $app->post('/admin/delete_gallery', function(Request $request) use ($app) {
 
 // List galleries
 $app->get('admin/galleries', function(Request $request) use ($app) {
-    $statement = $app["db"]->prepare("SELECT id, title FROM galleries");
+    $statement = $app["db"]->prepare("SELECT id, title, password FROM galleries");
     $statement->execute();
     $galleries = $statement->fetchAll();
 
@@ -154,6 +161,7 @@ $app->match('/admin/upload', function(Request $request) use ($app) {
         }
     }
     $success = false;
+    // Images dir
     $originalPath  = $finalDir.$originalDir;
     $thumbnailPath = $finalDir.$thumbnailDir;
     if( ! file_exists($originalPath)) {
@@ -162,14 +170,26 @@ $app->match('/admin/upload', function(Request $request) use ($app) {
     if( ! file_exists($thumbnailPath)) {
         mkdir($thumbnailPath);
     }
-    if ($file->validateFile() && $file->save($originalPath.$_POST['flowFilename'])) {
+    // Gallery dir
+    $galleryId = $request->get("galleryId");
+    $fileName  = $_POST["flowFilename"];;
+    $originalGalleryPath  = $originalPath.$galleryId.DIRECTORY_SEPARATOR;
+    $thumbnailGalleryPath = $thumbnailPath.$galleryId.DIRECTORY_SEPARATOR;
+    if( ! file_exists($originalGalleryPath)) {
+      mkdir($originalGalleryPath);
+    }
+    if( ! file_exists($thumbnailGalleryPath)) {
+      mkdir($thumbnailGalleryPath);
+    }
+    // Saving
+    if ($file->validateFile() && $file->save($originalGalleryPath.$fileName)) {
       // Resizing
       $app["imagine"]
-            ->open($originalPath.$_POST["flowFilename"])
+            ->open($originalGalleryPath.$fileName)
             ->resize(new Box(320, 240))
-            ->save($thumbnailPath.$_POST["flowFilename"]);
+            ->save($thumbnailGalleryPath.$fileName);
       // File upload was completed
-      $app["db"]->insert("images", array("name" => $_POST['flowFilename'], "gallery_id" => $request->get("galleryId")));
+      $app["db"]->insert("images", array("name" => $fileName, "gallery_id" => $galleryId));
       $success = true;
     }
     else {
