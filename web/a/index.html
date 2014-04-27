@@ -1,8 +1,8 @@
 <!DOCTYPE html>
 <html ng-app="ptoApp">
   <head>
-    <title>Pto</title>
-    <link href="bower_components/bootstrap/dist/css/bootstrap.min.css" rel="stylesheet" />
+    <title>Admin</title>
+    <link href="../bower_components/bootstrap/dist/css/bootstrap.min.css" rel="stylesheet" />
     <meta name="viewport" content="width=device-width, initial-scale=1">
   </head>
   <body>
@@ -77,7 +77,7 @@
               <div class="row">
                 <div class="col-xs-6 col-md-3" ng-repeat="image in imagesList">
                   <a href="#" class="thumbnail">
-                    <img ng-src="http://localhost/pto/web/uploads/thumbnail/{{ image.name }}" class="img-rounded" />
+                    <img ng-src="{{ getImageThumbnailPath(image.name) }}" class="img-rounded" />
                   </a>
                 </div>
               </div>
@@ -104,11 +104,11 @@
       </div>
     </div>
 
-    <script src="bower_components/angular/angular.js"></script>
-    <script src="bower_components/ng-flow/dist/ng-flow-standalone.js"></script>
-    <script src="bower_components/jquery/dist/jquery.min.js"></script>
-    <script src="bower_components/bootstrap/dist/js/bootstrap.min.js"></script>
-    <script src="js/config.js"></script>
-    <script src="js/main.js"></script>
+    <script src="../bower_components/angular/angular.js"></script>
+    <script src="../bower_components/ng-flow/dist/ng-flow-standalone.js"></script>
+    <script src="../bower_components/jquery/dist/jquery.min.js"></script>
+    <script src="../bower_components/bootstrap/dist/js/bootstrap.min.js"></script>
+    <script src="../js/config.js"></script>
+    <script src="../js/main.js"></script>
   </body>
 </html>

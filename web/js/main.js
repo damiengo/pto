@@ -152,6 +152,17 @@ ptoApp.controller("galleryCtrl", ["$scope", "$http", "UserService", "ENV", funct
   };
 
   /**
+   * Returns the thumbnail path of an image.
+   *
+   * @param The image path
+   *
+   * @return The path
+   */
+  $scope.getImageThumbnailPath = function(imageName) {
+    return ENV.uploads + "thumbnail/" + imageName;
+  }
+
+  /**
    * Has access.
    */
   $scope.isLogged = function() {
