@@ -6,6 +6,7 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\ParameterBag;
 use Imagine\Image\Box;
 use Neutron\Silex\Provider\ImagineServiceProvider;
+use Cocur\Slugify\Slugify;
 
 /** App **/
 $app = new Silex\Application();
@@ -59,11 +60,13 @@ $app->match('/admin/authenticate', function(Request $request) use ($app) {
 // Adding a gallery
 $app->post('/admin/gallery', function(Request $request) use ($app) {
     $title = $request->get("title", "");
+    $slugify = new Slugify();
+    $slug = $slugify->slugify($title);
     if($title !== "") {
-        $app["db"]->insert("galleries", array("title" => $title));
+        $app["db"]->insert("galleries", array("title" => $title, "slug" => $slug));
     }
 
-    return $app->json(['added' => true, 'id' => $app["db"]->lastInsertId(), 'title' => $title], 200);
+    return $app->json(['added' => true, 'id' => $app["db"]->lastInsertId(), 'title' => $title, 'slug' => $slug], 200);
 });
 
 // Deleting a gallery
@@ -105,7 +108,7 @@ $app->post('/admin/delete_gallery', function(Request $request) use ($app) {
 
 // List galleries
 $app->get('admin/galleries', function(Request $request) use ($app) {
-    $statement = $app["db"]->prepare("SELECT id, title, password, slug FROM galleries");
+    $statement = $app["db"]->prepare("SELECT id, title, password, slug FROM galleries ORDER BY created_at DESC");
     $statement->execute();
     $galleries = $statement->fetchAll();
 
@@ -184,9 +187,20 @@ $app->match('/admin/upload', function(Request $request) use ($app) {
     // Saving
     if ($file->validateFile() && $file->save($originalGalleryPath.$fileName)) {
       // Resizing
-      $app["imagine"]
-            ->open($originalGalleryPath.$fileName)
-            ->resize(new Box(320, 240))
+      $image  = $app["imagine"]->open($originalGalleryPath.$fileName);
+      $srcBox = $image->getSize();
+      // Scale on the smaller dimension
+      $maxWidth  = 320;
+      $maxHeight = 320;
+      if ($srcBox->getWidth() > $srcBox->getHeight()) {
+          $width  = $maxWidth;
+          $height = $srcBox->getHeight()*($maxWidth/$srcBox->getWidth());
+      }
+      else {
+          $width  = $srcBox->getWidth()*($maxHeight/$srcBox->getHeight());
+          $height = $maxHeight;
+      }
+      $image->resize(new Box($width, $height))
             ->save($thumbnailGalleryPath.$fileName);
       // File upload was completed
       $app["db"]->insert("images", array("name" => $fileName, "gallery_id" => $galleryId));

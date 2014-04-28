@@ -23,10 +23,10 @@
 
         <div class="row" ng-hide="selectedGallery == null">
           <div class="page-header">
-            <h1>{{ selectedGallery.title }} <small>{{ imagesList.length }} photos</small></h1>
+            <h1>{{ selectedGallery.title }} <small>{{ imagesList }} photos</small></h1>
           </div>
 
-          <div class="col-xs-3 col-md-2" ng-repeat="image in imagesList">
+          <div class="col-xs-6 col-md-3" ng-repeat="image in imagesList">
             <a href="#" class="thumbnail">
               <img ng-src="{{ getImageThumbnailPath(image.name) }}" class="img-rounded" />
             </a>

@@ -88,7 +88,8 @@ ptoApp.controller("galleryCtrl", ["$scope", "$http", "UserService", "ENV", funct
         .success(function(data) {
           $scope.galleries.push({
             id:       data.id, 
-      	    title:    $scope.galleryTitle, 
+      	    title:    data.title, 
+            slug:     data.slug,
             password: ""
           });
           $scope.galleryTitle = "";
@@ -119,6 +120,7 @@ ptoApp.controller("galleryCtrl", ["$scope", "$http", "UserService", "ENV", funct
    * @param gallery
    */
   $scope.images = function(gallery) {
+    $scope.imagesList = [];
     $scope.selectedGallery = gallery;
     $http.get(ENV.api+"/admin/images/"+gallery.id)
       .success(function(data, status) {
@@ -161,6 +163,21 @@ ptoApp.controller("galleryCtrl", ["$scope", "$http", "UserService", "ENV", funct
   $scope.getImageThumbnailPath = function(imageName) {
     return ENV.uploads + "thumbnail/" + $scope.selectedGallery.id + "/" + imageName;
   }
+
+  /**
+   * Returns the URL for the client gallery.
+   *
+   * @param gallery
+   *
+   * @return String
+   */
+  $scope.getClientGalleryLink = function(gallery) {
+    if(gallery != null) {
+      return ENV.photos_url + "#" + gallery.slug;
+    }
+
+    return "";
+  };
 
   /**
    * Has access.
