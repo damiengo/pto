@@ -3,6 +3,7 @@
   <head>
     <title>Galerie</title>
     <link href="../bower_components/bootstrap/dist/css/bootstrap.min.css" rel="stylesheet" />
+    <link href="../css/photos.css" rel="stylesheet" />
     <meta name="viewport" content="width=device-width, initial-scale=1">
   </head>
   <body>
@@ -12,13 +13,17 @@
       <!-- Gallery -->
       <div ng-controller="galleryCtrl">
 
-        <div ng-show="selectedGallery == null">
-          <p>
-            <input type="password" ng-model="enteredPassword" placeholder="Mot de passe" />
-          </p>
-          <p>
-            <a href="" class="btn btn-primary" ng-click="checkPassword(enteredPassword)">Connexion</a>
-          </p>
+        <div ng-show="selectedGallery == null" id="loginForm" class="row">
+          <div class="col-sm-5"></div>
+          <div class="col-sm-2">
+            <p>
+              <input type="password" ng-model="enteredPassword" placeholder="Mot de passe" class="form-control" />
+            </p>
+            <p>
+              <a href="" class="btn btn-primary btn-block" ng-click="checkPassword(enteredPassword)">Connexion</a>
+            </p>
+          </div>
+          <div class="col-sm-5"></div>
         </div>
 
         <div class="row" ng-hide="selectedGallery == null">
@@ -28,7 +33,7 @@
 
           <div class="col-xs-3 col-md-2" ng-repeat="image in imagesList">
             <a href="#" class="thumbnail">
-              <img ng-src="{{ getImageThumbnailPath(image.name) }}" class="img-rounded" />
+              <img ng-src="{{ getImageThumbnailPath(image.name) }}" class="img-responsive img-rounded" />
             </a>
           </div>
         </div>
