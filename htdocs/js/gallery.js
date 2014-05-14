@@ -57,4 +57,15 @@ galleryApp.controller("galleryCtrl", ["$scope", "$http", "ENV", function($scope,
     return ENV.uploads + "thumbnail/" + $scope.selectedGallery.id + "/" + imageName;
   }
 
+  /**
+   * Returns the original path of an image.
+   *
+   * @param The image path
+   *
+   * @return The path
+   */
+  $scope.getImageOriginalPath = function(imageName) {
+    return ENV.uploads + "original/" + $scope.selectedGallery.id + "/" + imageName;
+  }
+
 }])
