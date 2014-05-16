@@ -39,8 +39,8 @@
           </div>
 
           <div class="col-xs-3 col-md-2" ng-repeat="image in imagesList" id="gallery" data-toggle="modal-gallery" data-target="#modal-gallery">
-            <a href="{{ getImageOriginalPath(image.name) }}" class="thumbnail" data-gallery="" title="{{ image.name }}">
-              <img ng-src="{{ getImageThumbnailPath(image.name) }}" class="img-responsive img-rounded" />
+            <a href="{{ getImageOriginalPath(image.name) }}" class="thumbnail item" data-gallery="" title="{{ image.name }}">
+              <img ng-src="{{ getImageThumbnailPath(image.name) }}" class="img-responsive" />
             </a>
           </div>
         </div>
@@ -89,6 +89,7 @@
     <script src="../js/jquery.blueimp-gallery.min.js"></script>
     <script src="../js/load-image.min.js"></script>
     <script src="../js/bootstrap-image-gallery.min.js"></script>
+    <script src="../js/masonry.pkgd.min.js"></script>
     <script src="../js/config.js"></script>
     <script src="../js/gallery.js"></script>
   </body>
