@@ -1,7 +1,7 @@
 'use strict';
 
 // Declaring the app
-var galleryApp = angular.module("galleryApp", ["config"]);
+var galleryApp = angular.module("galleryApp", ["wu.masonry", "config"]);
 
 // Gallery controller
 galleryApp.controller("galleryCtrl", ["$scope", "$http", "ENV", function($scope, $http, ENV) {
@@ -41,12 +41,6 @@ galleryApp.controller("galleryCtrl", ["$scope", "$http", "ENV", function($scope,
     $http.get(ENV.api+"/gallery/images/"+gallery.id)
       .success(function(data) {
         $scope.imagesList = data.images;
-        var $container = $('#gallery');
-        // initialize
-        $container.masonry({
-          columnWidth: 200,
-          itemSelector: '.item'
-        });
       })
       .error(function(data) {
       });

@@ -38,10 +38,12 @@
             <h1>{{ selectedGallery.title }} <small>{{ imagesList.length }} photos</small></h1>
           </div>
 
-          <div class="col-xs-3 col-md-2" ng-repeat="image in imagesList" id="gallery" data-toggle="modal-gallery" data-target="#modal-gallery">
-            <a href="{{ getImageOriginalPath(image.name) }}" class="thumbnail item" data-gallery="" title="{{ image.name }}">
-              <img ng-src="{{ getImageThumbnailPath(image.name) }}" class="img-responsive" />
-            </a>
+          <div masonry>
+            <div class="col-xs-3 col-md-2 masonry-brick" ng-repeat="image in imagesList" id="gallery" data-toggle="modal-gallery" data-target="#modal-gallery">
+              <a href="{{ getImageOriginalPath(image.name) }}" class="thumbnail" data-gallery="" title="{{ image.name }}">
+                <img ng-src="{{ getImageThumbnailPath(image.name) }}" class="img-responsive" />
+              </a>
+            </div>
           </div>
         </div>
 
@@ -83,13 +85,15 @@
       </div>
     </div>
 
-    <script src="../bower_components/angular/angular.js"></script>
     <script src="../bower_components/jquery/dist/jquery.min.js"></script>
     <script src="../bower_components/bootstrap/dist/js/bootstrap.min.js"></script>
     <script src="../js/jquery.blueimp-gallery.min.js"></script>
     <script src="../js/load-image.min.js"></script>
     <script src="../js/bootstrap-image-gallery.min.js"></script>
     <script src="../js/masonry.pkgd.min.js"></script>
+    <script src="../js/imagesloaded.pkgd.min.js"></script>
+    <script src="../bower_components/angular/angular.js"></script>
+    <script src="../js/angular-masonry.min.js"></script>
     <script src="../js/config.js"></script>
     <script src="../js/gallery.js"></script>
   </body>

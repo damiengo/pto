@@ -12,6 +12,6 @@
     "angular-route": "~1.2.15",
     "angular-resource": "~1.2.15", 
     "ng-flow": "~2", 
-    "masonry": "~"
+    "angular-masonry": "~0.8.1"
   }
 }
