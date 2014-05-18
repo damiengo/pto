@@ -76,6 +76,7 @@ $app->post('/admin/delete_gallery', function(Request $request) use ($app) {
         $finalDir     = $app["config"]["upload"]["final_dir"];
         $originalDir  = $app["config"]["upload"]["original_dir"].$id.DIRECTORY_SEPARATOR;
         $thumbnailDir = $app["config"]["upload"]["thumbnail_dir"].$id.DIRECTORY_SEPARATOR;
+        $bigDir       = $app["config"]["upload"]["big_dir"].$id.DIRECTORY_SEPARATOR;
         // Cleaning images
         $statement = $app["db"]->prepare("SELECT * FROM images WHERE gallery_id = ?");
         $statement->bindValue(1, $id);
@@ -88,6 +89,9 @@ $app->post('/admin/delete_gallery', function(Request $request) use ($app) {
             if(file_exists($finalDir.$thumbnailDir.$image["name"])) {
                 unlink($finalDir.$thumbnailDir.$image["name"]);
             }
+            if(file_exists($finalDir.$bigDir.$image["name"])) {
+                unlink($finalDir.$bigDir.$image["name"]);
+            }
         }
         // Cleaning folder
         if(file_exists($finalDir.$originalDir)) {
@@ -95,6 +99,9 @@ $app->post('/admin/delete_gallery', function(Request $request) use ($app) {
         }
         if(file_exists($finalDir.$thumbnailDir)) {
             rmdir($finalDir.$thumbnailDir);
+        }
+        if(file_exists($finalDir.$bigDir)) {
+            rmdir($finalDir.$bigDir);
         }
         $app["db"]->delete("images", array("gallery_id" => $id));
 
@@ -140,6 +147,7 @@ $app->match('/admin/upload', function(Request $request) use ($app) {
     $tmpDir       = $app["config"]["upload"]["tmp_dir"];
     $finalDir     = $app["config"]["upload"]["final_dir"];
     $originalDir  = $app["config"]["upload"]["original_dir"];
+    $bigDir       = $app["config"]["upload"]["big_dir"];
     $thumbnailDir = $app["config"]["upload"]["thumbnail_dir"];
 
     $config = new \Flow\Config();
@@ -167,41 +175,38 @@ $app->match('/admin/upload', function(Request $request) use ($app) {
     // Images dir
     $originalPath  = $finalDir.$originalDir;
     $thumbnailPath = $finalDir.$thumbnailDir;
+    $bigPath       = $finalDir.$bigDir;
     if( ! file_exists($originalPath)) {
         mkdir($originalPath);
     }
     if( ! file_exists($thumbnailPath)) {
         mkdir($thumbnailPath);
     }
+    if( ! file_exists($bigPath)) {
+        mkdir($bigPath);
+    }
     // Gallery dir
     $galleryId = $request->get("galleryId");
     $fileName  = $_POST["flowFilename"];;
     $originalGalleryPath  = $originalPath.$galleryId.DIRECTORY_SEPARATOR;
     $thumbnailGalleryPath = $thumbnailPath.$galleryId.DIRECTORY_SEPARATOR;
+    $bigGalleryPath       = $bigPath.$galleryId.DIRECTORY_SEPARATOR;
     if( ! file_exists($originalGalleryPath)) {
       mkdir($originalGalleryPath);
     }
     if( ! file_exists($thumbnailGalleryPath)) {
       mkdir($thumbnailGalleryPath);
     }
+    if( ! file_exists($bigGalleryPath)) {
+      mkdir($bigGalleryPath);
+    }
     // Saving
     if ($file->validateFile() && $file->save($originalGalleryPath.$fileName)) {
       // Resizing
       $image  = $app["imagine"]->open($originalGalleryPath.$fileName);
-      $srcBox = $image->getSize();
-      // Scale on the smaller dimension
-      $maxWidth  = 320;
-      $maxHeight = 320;
-      if ($srcBox->getWidth() > $srcBox->getHeight()) {
-          $width  = $maxWidth;
-          $height = $srcBox->getHeight()*($maxWidth/$srcBox->getWidth());
-      }
-      else {
-          $width  = $srcBox->getWidth()*($maxHeight/$srcBox->getHeight());
-          $height = $maxHeight;
-      }
-      $image->resize(new Box($width, $height))
-            ->save($thumbnailGalleryPath.$fileName);
+      // Keep order, big to small
+      resize($image, 1200, 1200, $bigGalleryPath, $fileName);
+      resize($image, 320, 320, $thumbnailGalleryPath, $fileName);
       // File upload was completed
       $app["db"]->insert("images", array("name" => $fileName, "gallery_id" => $galleryId));
       $success = true;
@@ -249,6 +254,33 @@ $app->get('gallery/images/{id}', function(Request $request, $id) use ($app) {
 
   return $app->json(array("success" => true, "images" => $images), 200);
 });
+
+/** Functions **/
+
+/**
+ * Image resizing.
+ *
+ * @param $image
+ * @param $width
+ * @param $height
+ * @param $path
+ * @param $fileName
+ *
+ * @return
+ */
+function resize($image, $maxWidth, $maxHeight, $path, $fileName) {
+  $srcBox = $image->getSize();
+  if ($srcBox->getWidth() > $srcBox->getHeight()) {
+    $width  = $maxWidth;
+    $height = $srcBox->getHeight()*($maxWidth/$srcBox->getWidth());
+  }
+  else {
+    $width  = $srcBox->getWidth()*($maxHeight/$srcBox->getHeight());
+    $height = $maxHeight;
+  }
+  $image->resize(new Box($width, $height))
+    ->save($path.$fileName);
+}
 
 $app->run();
 

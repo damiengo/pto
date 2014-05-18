@@ -58,6 +58,17 @@ galleryApp.controller("galleryCtrl", ["$scope", "$http", "ENV", function($scope,
   }
 
   /**
+   * Returns the big path of an image.
+   *
+   * @param The image path
+   *
+   * @return The path
+   */
+  $scope.getImageBigPath = function(imageName) {
+    return ENV.uploads + "big/" + $scope.selectedGallery.id + "/" + imageName;
+  }
+
+  /**
    * Returns the original path of an image.
    *
    * @param The image path

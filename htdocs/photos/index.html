@@ -40,7 +40,7 @@
 
           <div masonry>
             <div class="col-xs-3 col-md-2 masonry-brick" ng-repeat="image in imagesList" id="gallery" data-toggle="modal-gallery" data-target="#modal-gallery">
-              <a href="{{ getImageOriginalPath(image.name) }}" class="thumbnail" data-gallery="" title="{{ image.name }}">
+              <a href="{{ getImageBigPath(image.name) }}" class="thumbnail" data-gallery="" title="{{ image.name }}">
                 <img ng-src="{{ getImageThumbnailPath(image.name) }}" class="img-responsive" />
               </a>
             </div>
